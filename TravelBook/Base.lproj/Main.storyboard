@@ -17,27 +17,41 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JwO-7m-YbX">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JwO-7m-YbX">
+                                <rect key="frame" x="0.0" y="211" width="393" height="607"/>
                                 <standardMapConfiguration key="preferredConfiguration"/>
                             </mapView>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="01J-70-KjY">
+                                <rect key="frame" x="33" y="91" width="326" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="comment" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VUu-lG-qkH">
+                                <rect key="frame" x="33" y="144" width="326" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="JwO-7m-YbX" secondAttribute="trailing" id="GiA-zk-6bK"/>
                             <constraint firstItem="JwO-7m-YbX" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bR9-Ww-yey"/>
-                            <constraint firstItem="JwO-7m-YbX" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="lOq-af-b0E"/>
+                            <constraint firstItem="JwO-7m-YbX" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="161" id="lOq-af-b0E"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="JwO-7m-YbX" secondAttribute="bottom" id="m3Q-bM-NsK"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="commentText" destination="VUu-lG-qkH" id="Ngo-m6-3Kc"/>
                         <outlet property="mapView" destination="JwO-7m-YbX" id="dzb-PN-clo"/>
+                        <outlet property="nameText" destination="01J-70-KjY" id="qg4-hZ-UCZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="89" y="4"/>
+            <point key="canvasLocation" x="87.786259541984734" y="3.5211267605633805"/>
         </scene>
     </scenes>
     <resources>
