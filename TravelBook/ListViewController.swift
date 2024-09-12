@@ -13,6 +13,8 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var tableView: UITableView!
     var titleArray = [String]()
     var idArray = [UUID]()
+    var chosenTitle : String?
+    var chosenTitleID : UUID?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,5 +70,18 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
 
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        chosenTitle = titleArray[indexPath.row]
+        chosenTitleID = idArray[indexPath.row]
+        performSegue(withIdentifier: "toVC", sender: nil)
+    }
      
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toVC" {
+            let destinationVC = segue.destination as! ViewController
+            destinationVC.selectedTitle = chosenTitle
+            destinationVC.selectedTitleID = chosenTitleID
+        }
+    }
 }
