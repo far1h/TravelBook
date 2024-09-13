@@ -33,9 +33,43 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         gestureRecognizer.minimumPressDuration = 2
         mapView.addGestureRecognizer(gestureRecognizer)
         
-        if let title = selectedTitle {
-            let stringUUID = selectedTitleID!.uuidString
-            print(stringUUID)
+        if let _ = selectedTitle {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let context = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Place")
+            let idString = selectedTitleID!.uuidString
+            fetchRequest.predicate = NSPredicate(format: "id = %@", idString)
+            fetchRequest.returnsObjectsAsFaults = false
+            
+            do {
+                let results = try context.fetch(fetchRequest)
+                if results.count > 0 {
+                    for result in results as! [NSManagedObject] {
+                        if let title = result.value(forKey: "title") as? String {
+                            if let subtitle = result.value(forKey: "subtitle") as? String {
+                                if let latitude = result.value(forKey: "latitude") as? Double {
+                                    if let longitude = result.value(forKey: "longitude") as? Double {
+                                        let annotation = MKPointAnnotation()
+                                        annotation.title = title
+                                        annotation.subtitle = subtitle
+                                        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                                        annotation.coordinate = coordinate
+                                        self.mapView.addAnnotation(annotation)
+                                        nameText.text = title
+                                        commentText.text = subtitle
+                                    }
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                }
+            } catch {
+                print("error")
+            }
         }
     }
     
