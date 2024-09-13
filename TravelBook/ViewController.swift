@@ -16,8 +16,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     @IBOutlet weak var commentText: UITextField!
     @IBOutlet weak var mapView: MKMapView!
     var locationManager = CLLocationManager()
-    var chosenLatitude = Double()
-    var chosenLongitude = Double()
+    var selectedLatitude : Double?
+    var selectedLongitude : Double?
     var selectedTitle : String?
     var selectedTitleID : UUID?
     
@@ -50,6 +50,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                             if let subtitle = result.value(forKey: "subtitle") as? String {
                                 if let latitude = result.value(forKey: "latitude") as? Double {
                                     if let longitude = result.value(forKey: "longitude") as? Double {
+                                        selectedLatitude = latitude
+                                        selectedLongitude = longitude
+                                        selectedTitle = title
                                         let annotation = MKPointAnnotation()
                                         annotation.title = title
                                         annotation.subtitle = subtitle
@@ -82,8 +85,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let touchedPoint = gestureRecognizer.location(in: self.mapView)
             let touchedCoordinates = self.mapView.convert(touchedPoint, toCoordinateFrom: self.mapView)
             
-            chosenLatitude = touchedCoordinates.latitude
-            chosenLongitude = touchedCoordinates.longitude
+            selectedLatitude = touchedCoordinates.latitude
+            selectedLongitude = touchedCoordinates.longitude
             
             let annotation = MKPointAnnotation()
             annotation.coordinate = touchedCoordinates
@@ -105,22 +108,39 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        if annotation is MKUserLocation {
-            return nil
+        if let title = selectedTitle {
+            let reuseId = "myAnnotation"
+            var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+            if pinView == nil {
+                pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+                pinView?.canShowCallout = true
+                pinView?.tintColor = UIColor.black
+                let button =  UIButton(type: .detailDisclosure)
+                pinView?.rightCalloutAccessoryView = button
+            }
+            else {
+                pinView?.annotation = annotation
+            }
+            return pinView
         }
-        let reuseId = "myAnnotation"
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView?.canShowCallout = true
-            pinView?.tintColor = UIColor.black
-            let button =  UIButton(type: .detailDisclosure)
-            pinView?.rightCalloutAccessoryView = button
+        return nil
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if let latitude = selectedLatitude, let longitude = selectedLongitude {
+            let requestLocation = CLLocation(latitude: latitude, longitude: longitude)
+            CLGeocoder().reverseGeocodeLocation(requestLocation) { placemarks, error in
+                if let placemark = placemarks {
+                    if placemark.count > 0 {
+                        let newPlacemark = MKPlacemark(placemark: placemark[0])
+                        let item = MKMapItem(placemark: newPlacemark)
+                        item.name = self.selectedTitle
+                        let launchOptions = [MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeDriving]
+                        item.openInMaps(launchOptions: launchOptions)
+                    }
+                }
+            }
         }
-        else {
-            pinView?.annotation = annotation
-        }
-        return pinView
     }
 
     @IBAction func saveButtonClicked(_ sender: UIButton) {
@@ -130,8 +150,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         newPlace.setValue(nameText.text, forKey: "title")
         newPlace.setValue(commentText.text, forKey: "subtitle")
-        newPlace.setValue(chosenLatitude, forKey: "latitude")
-        newPlace.setValue(chosenLongitude, forKey: "longitude")
+        newPlace.setValue(selectedLatitude, forKey: "latitude")
+        newPlace.setValue(selectedLongitude, forKey: "longitude")
         newPlace.setValue(UUID(), forKey: "id")
         
         do {
