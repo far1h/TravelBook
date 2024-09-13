@@ -27,7 +27,11 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         getData()
     }
     
-    func getData(){
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(getData), name: NSNotification.Name("newPlace"), object: nil)
+    }
+    
+    @objc func getData(){
         let appDelegate = UIApplication.shared.delegate as!  AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Place")
@@ -58,6 +62,8 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @objc func addButtonClicked() {
+        chosenTitle = nil
+        chosenTitleID = nil
         performSegue(withIdentifier: "toVC", sender: nil)
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -84,4 +90,5 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
             destinationVC.selectedTitleID = chosenTitleID
         }
     }
+    
 }
